@@ -42,9 +42,23 @@ SELECT
 FROM order_details od
 INNER JOIN products p ON p.product_id = od.product_id
 GROUP BY id_produto, nome_produto
-HAVING SUM(od.quantity) > 200
-ORDER BY quantidade
+HAVING SUM(od.quantity) < 200
+ORDER BY quantidade;
 
 -- Cria um relatório que mostra o total de pedidos por cliente desde 31 de dezembro de 1996.
+SELECT
+    customer_id,
+    COUNT(order_id) total_pedidos
+FROM orders
+WHERE order_date >= '1996-12-31'
+GROUP BY customer_id
+ORDER BY total_pedidos DESC;
 
 -- O relatório deve retornar apenas linhas para as quais o total de pedidos é maior que 15 (5 linhas)
+SELECT
+    customer_id,
+    COUNT(order_id) total_pedidos
+FROM orders
+WHERE order_date >= '1996-12-31'
+GROUP BY customer_id
+HAVING COUNT(order_id) > 15
