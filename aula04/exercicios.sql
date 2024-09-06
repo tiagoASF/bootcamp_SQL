@@ -92,52 +92,24 @@ GROUP BY p.product_id, p.product_name;
 
 
 /*DESAFIO 02
-Listar funcionários dividindo-os em 3 grupos usando NTILE
+Listar funcionários dividindo-os em 3 grupos de sobrenome  usando NTILE
 F*/
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 SELECT
-    title,
+    NTILE(3) OVER (ORDER BY last_name) AS grupos_sobrenome,
     first_name,
     last_name,
-    NTILE(3) OVER (ORDER BY first_name) AS group
-FROM employees
-*/
-
-
-
-
-
-
-
-
-
+    title
+FROM employees;
 
 
 
 
 /*DESAFIO 03
 Ordenando os custos de envio pagos pelos clientes de acordo
-com suas datas de pedido, mostrando o custo anterior e o custo posterior usando LAG e LEAD:
-FROM orders JOIN shippers ON shippers.shipper_id = orders.ship_via;
+com suas datas de pedido, mostrando o custo anterior e o custo posterior usando LAG (valor anterior) e LEAD(fornece proximo valor proximo):
+
 */
 
 SELECT * FROM orders;
