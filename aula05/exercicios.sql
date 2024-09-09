@@ -42,43 +42,56 @@ INNER JOIN customers c ON o.customer_id = c.customer_id
 GROUP BY c.company_name
 order by total_gasto DESC;
 
-
 -- Cinco grupos de acordo com valor pago por cliente
-
-
-
-
-
-
-
-
-
-
 SELECT
     c.company_name,
-    ROUND(SUM((od.unit_price * od.quantity) * (1 - od.discount))) AS valor_pago_por_cliente,
-    NTILE(5) OVER (ORDER BY SUM((od.unit_price * od.quantity) * (1 - od.discount)) DESC) AS group
+    ROUND(SUM((od.unit_price * od.quantity) * (1 - od.discount))) AS total_gasto,
+    NTILE(5) OVER (ORDER BY SUM((od.unit_price * od.quantity) * (1 - od.discount)) DESC) AS grupo
 FROM orders o
 INNER JOIN order_details od ON od.order_id = o.order_id
-INNER JOIN customers c ON c.customer_id = o.customer_id
+INNER JOIN customers c ON o.customer_id = c.customer_id
 GROUP BY c.company_name
+order by total_gasto DESC;
 
--- Agora somente os clientes que estão nos grupos 3, 4, 5 para que seja feita uma análise de Marketing especial com eles
-WITH clientes_para_marketing AS (
-SELECT
+/*Agora somente os clientes que estão nos grupos 3, 4, 5
+para que seja feita uma análise de Marketing especial com eles*/
+
+WITH grupos_por_valores_pagos AS (
+    SELECT
     c.company_name,
-    ROUND(SUM((od.unit_price * od.quantity) * (1 - od.discount))) AS valor_pago_por_cliente,
-    NTILE(5) OVER (ORDER BY SUM((od.unit_price * od.quantity) * (1 - od.discount)) DESC) AS group_marketing
-FROM orders o
-INNER JOIN order_details od ON od.order_id = o.order_id
-INNER JOIN customers c ON c.customer_id = o.customer_id
-GROUP BY c.company_name
+    ROUND(SUM((od.unit_price * od.quantity) * (1 - od.discount))) AS total_gasto,
+    NTILE(5) OVER (ORDER BY SUM((od.unit_price * od.quantity) * (1 - od.discount)) DESC) AS grupo
+    FROM orders o
+    INNER JOIN order_details od ON od.order_id = o.order_id
+    INNER JOIN customers c ON o.customer_id = c.customer_id
+    GROUP BY c.company_name
+    order by total_gasto DESC
 )
-SELECT * FROM clientes_para_marketing
-WHERE group_marketing >= 3;
+SELECT * FROM grupos_por_valores_pagos
+WHERE grupo >= 3;
+
 
 
 --Identificar os 10 produtos mais vendidos por preço acumulado
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 SELECT
     p.product_name,
     SUM((od.unit_price * od.quantity) * (1 - od.discount))
