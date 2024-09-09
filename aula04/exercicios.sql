@@ -109,20 +109,13 @@ FROM employees;
 /*DESAFIO 03
 Ordenando os custos de envio pagos pelos clientes de acordo
 com suas datas de pedido, mostrando o custo anterior e o custo posterior usando LAG (valor anterior) e LEAD(fornece proximo valor proximo):
-
 */
-
-SELECT * FROM orders;
-SELECT * FROM shippers;
-
-
 SELECT
-    customer_id,
-    order_date,
-    LAG(freight) OVER (PARTITION BY customer_id ORDER BY order_date) AS previous_order_freight,
-    freight AS order_freight,
-    LEAD(freight) OVER (PARTITION BY customer_id ORDER BY order_date) AS next_order_freight
-FROM orders
-
-
+    customer_id AS cliente,
+    order_id AS pedido,
+    LAG(freight) OVER (PARTITION BY customer_id ORDER BY order_date) AS frete_anterior,
+    freight AS custo_envio,
+    AVG(freight) OVER (PARTITION BY customer_id) AS media,
+    LEAD(freight) OVER (PARTITION BY customer_id ORDER BY order_date) AS frete_posterior
+FROM orders;
 
