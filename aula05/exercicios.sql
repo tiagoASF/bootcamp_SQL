@@ -73,56 +73,38 @@ WHERE grupo >= 3;
 
 
 --Identificar os 10 produtos mais vendidos por preço acumulado
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 SELECT
     p.product_name,
-    SUM((od.unit_price * od.quantity) * (1 - od.discount))
-FROM
-    orders o
-INNER JOIN order_details od ON od.order_id = o.order_id
-INNER JOIN products p ON  p.product_id = od.product_id
+    ROUND(SUM((od.unit_price * od.quantity) * (1 - discount))) AS total_faturado_por_produto
+FROM order_details od
+INNER JOIN products p ON p.product_id = od.product_id
 GROUP BY p.product_name
+ORDER BY total_faturado_por_produto DESC
+LIMIT 10;
+
+
 
 --Identificar os 10 produtos mais vendidos por unidades vendidas
 SELECT
-    p.product_name,
+    p.product_name AS produto,
     SUM(od.quantity) AS quantidade_vendida
-FROM orders o
-INNER JOIN order_details od ON od.order_id = o.order_id
+FROM order_details od
 INNER JOIN products p ON p.product_id = od.product_id
-GROUP BY p.product_name
+GROUP BY produto
 ORDER BY quantidade_vendida DESC
+LIMIT 10;
+
 
 -- Quais clientes do Reino Unido pagaram mais de 1000 dólares?
-
 SELECT
-    c.company_name,
-    SUM((od.quantity * od.unit_price) * (1 - od.discount)) total_pago
-FROM
-    orders o
-INNER JOIN order_details od ON od.order_id = o.order_id
+    c.company_name AS cliente,
+    ROUND(SUM((od.quantity * od.unit_price) * (1 - od.discount))) AS total_gasto
+FROM order_details od
+INNER JOIN orders o ON o.order_id = od.order_id
 INNER JOIN customers c ON c.customer_id = o.customer_id
 WHERE c.country = 'UK'
-GROUP BY c.company_name
-HAVING SUM((od.quantity * od.unit_price) * (1 - od.discount)) > 1000;
-
+GROUP BY cliente
+HAVING SUM((od.quantity * od.unit_price) * (1 - od.discount)) >  1000
+ORDER BY total_gasto DESC;
 
 
